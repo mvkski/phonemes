@@ -141,6 +141,8 @@
         function getDefaultURL(phoneme) {
             // Remove IPA characters that might not work in URLs
             let urlPhoneme = phoneme
+	        .replace('a', 'https://looptube.io/?videoId=-FHXpQeFwOk&start=167.095588235294&end=170.43749999999866&rate=1')
+	        .replace('i', 'https://looptube.io/?videoId=-FHXpQeFwOk&start=177.12132352941163&end=180.46323529411626&rate=1')
                 .replace('ɑ', 'hamburger') // a back
                 .replace('ɛ', 'e') // open e
                 .replace('ə', 'e') // schwa
