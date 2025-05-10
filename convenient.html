@@ -1,18 +1,4 @@
-.subgroup-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #555;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        h2 {
-            text-align: center;
-            margin-top: 60px;
-            margin-bottom: 20px;
-            color: #333;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -84,6 +70,22 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        
+        .subgroup-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -137,34 +139,80 @@
             voiced: ['b', 'd', 'g', 'v', 'z', 'ʒ', 'm', 'n', 'ɲ', 'ŋ', 'l', 'ʁ', 'ʀ']
         };
         
+        // Direct mapping of phonemes to [start, end] times in "m:SS" or "mm:SS" format
+        const phonemeTimes = {
+            // Oral vowels - with looptube times
+            'a': ['2:47.095588235294', '2:50.43749999999866'],
+            'e': ['0:00', '0:00'],
+            'ɛ': ['0:00', '0:00'],
+            'ə': ['0:00', '0:00'],
+            'i': ['2:57', '2:59'],
+            'ɔ': ['3:34.5', '3:36.5'],
+            'o': ['3:24.5', '3:26.5'],
+            'œ': ['3:53', '3:55'],
+            'ø': ['3:44', '3:46'],
+            'u': ['3:15', '3:17'],
+            'y': ['3:05.2', '3:07'],
+            
+            // Nasal vowels
+            'ɛ̃': ['0:00', '0:00'],
+            'ɔ̃': ['0:00', '0:00'],
+            'ɑ̃': ['0:00', '0:00'],
+            
+            // Semi-vowels
+            'j': ['0:00', '0:00'],
+            'w': ['0:00', '0:00'],
+            'ɥ': ['0:00', '0:00'],
+            
+            // Unvoiced consonants
+            'p': ['0:00', '0:00'],
+            't': ['0:00', '0:00'],
+            'k': ['0:00', '0:00'],
+            'f': ['0:00', '0:00'],
+            's': ['0:00', '0:00'],
+            'ʃ': ['0:00', '0:00'],
+            
+            // Voiced consonants
+            'b': ['0:00', '0:00'],
+            'd': ['0:00', '0:00'],
+            'g': ['0:00', '0:00'],
+            'v': ['0:00', '0:00'],
+            'z': ['0:00', '0:00'],
+            'ʒ': ['0:00', '0:00'],
+            'm': ['0:00', '0:00'],
+            'n': ['0:00', '0:00'],
+            'ɲ': ['0:00', '0:00'],
+            'ŋ': ['0:00', '0:00'],
+            'l': ['0:00', '0:00'],
+            'ʁ': ['0:00', '0:00'],
+            'ʀ': ['0:00', '0:00']
+        };
+        
+        // Function to convert "m:SS" or "mm:SS" to seconds
+        function timeStringToSeconds(timeString) {
+            const parts = timeString.split(':');
+            const minutes = parseFloat(parts[0]) || 0;
+            const seconds = parseFloat(parts[1]) || 0;
+            return minutes * 60 + seconds;
+        }
+        
+        // Function to convert [start, end] times to looptube URL
+        function createLooptubeURL(startTime, endTime) {
+            const startSeconds = timeStringToSeconds(startTime);
+            const endSeconds = timeStringToSeconds(endTime);
+            
+            if (startSeconds === 0 && endSeconds === 0) {
+                // Default URL for phonemes without looptube times
+                return 'www.default.com';
+            }
+            
+            return `https://www.looper.tube/?v=-FHXpQeFwOk&s=${startSeconds}&e=${endSeconds}&spd=1`;
+        }
+        
         // Function to get default URL for a phoneme
         function getDefaultURL(phoneme) {
-            // Remove IPA characters that might not work in URLs
-            let urlPhoneme = phoneme
-	        .replace('a', 'https://looptube.io/?videoId=-FHXpQeFwOk&start=167.095588235294&end=170.43749999999866&rate=1')
-	        .replace('i', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=177&e=179&spd=1')
-		.replace('y', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=185.2&e=187&spd=1')
-		.replace('u', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=195&e=197&spd=1')
-		.replace('o', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=204.5&e=206.5&spd=1')
-                .replace('ɑ', 'hamburger') // a back
-                .replace('ɛ', 'e') // open e
-                .replace('ə', 'e') // schwa
-                .replace('ɔ', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=214.5&e=216.5&spd=1') // open o
-                .replace('œ', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=233&e=235&spd=1')
-                .replace('ø', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=224&e=226&spd=1') // open oe
-                .replace('ɛ̃', 'en') // nasal e
-                .replace('ɔ̃', 'on') // nasal o
-                .replace('œ̃', 'oen') // nasal oe
-                .replace('ɑ̃', 'an') // nasal a
-                .replace('ʃ', 'sh') // sh
-                .replace('ʒ', 'zh') // zh
-                .replace('ɲ', 'ny') // ny
-                .replace('ŋ', 'ng') // ng
-                .replace('ʁ', 'r') // r
-                .replace('ʀ', 'r') // r
-                .replace('ɥ', 'w'); // w
-            
-            return `${urlPhoneme}`;
+            const times = phonemeTimes[phoneme] || ['0:00', '0:00'];
+            return createLooptubeURL(times[0], times[1]);
         }
 
         // Function to handle phoneme click
@@ -173,10 +221,10 @@
             const url = input.value.trim();
             
             if (url) {
-                //Add http:// if no protocol is specified
+                // Add http:// if no protocol is specified
                 let finalUrl = url;
                 if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                   finalUrl = 'http://' + url;
+                    finalUrl = 'http://' + url;
                 }
                 window.open(finalUrl, '_blank');
             } else {

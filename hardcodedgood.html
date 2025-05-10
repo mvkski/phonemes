@@ -1,18 +1,4 @@
-.subgroup-title {
-            font-size: 18px;
-            font-weight: bold;
-            color: #555;
-            margin-top: 30px;
-            margin-bottom: 15px;
-            text-align: center;
-        }
-        
-        h2 {
-            text-align: center;
-            margin-top: 60px;
-            margin-bottom: 20px;
-            color: #333;
-        }<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="fr">
 <head>
     <meta charset="UTF-8">
@@ -84,6 +70,22 @@
             border-radius: 8px;
             box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
+        
+        .subgroup-title {
+            font-size: 18px;
+            font-weight: bold;
+            color: #555;
+            margin-top: 30px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+        
+        h2 {
+            text-align: center;
+            margin-top: 60px;
+            margin-bottom: 20px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
@@ -137,34 +139,68 @@
             voiced: ['b', 'd', 'g', 'v', 'z', 'ʒ', 'm', 'n', 'ɲ', 'ŋ', 'l', 'ʁ', 'ʀ']
         };
         
+        // Direct mapping of phonemes to [start, end] times
+        const phonemeTimes = {
+            // Oral vowels - with looptube times
+            'a': [167.095588235294, 170.43749999999866],
+            'e': [0, 0],
+            'ɛ': [0, 0],
+            'ə': [0, 0],
+            'i': [177, 179],
+            'ɔ': [214.5, 216.5],
+            'o': [204.5, 206.5],
+            'œ': [233, 235],
+            'ø': [224, 226],
+            'u': [195, 197],
+            'y': [185.2, 187],
+            
+            // Nasal vowels
+            'ɛ̃': [0, 0],
+            'ɔ̃': [0, 0],
+            'ɑ̃': [0, 0],
+            
+            // Semi-vowels
+            'j': [0, 0],
+            'w': [0, 0],
+            'ɥ': [0, 0],
+            
+            // Unvoiced consonants
+            'p': [0, 0],
+            't': [0, 0],
+            'k': [0, 0],
+            'f': [0, 0],
+            's': [0, 0],
+            'ʃ': [0, 0],
+            
+            // Voiced consonants
+            'b': [0, 0],
+            'd': [0, 0],
+            'g': [0, 0],
+            'v': [0, 0],
+            'z': [0, 0],
+            'ʒ': [0, 0],
+            'm': [0, 0],
+            'n': [0, 0],
+            'ɲ': [0, 0],
+            'ŋ': [0, 0],
+            'l': [0, 0],
+            'ʁ': [0, 0],
+            'ʀ': [0, 0]
+        };
+        
+        // Function to convert [start, end] times to looptube URL
+        function createLooptubeURL(start, end) {
+            if (start === 0 && end === 0) {
+                // Default URL for phonemes without looptube times
+                return 'www.default.com';
+            }
+            return `https://www.looper.tube/?v=-FHXpQeFwOk&s=${start}&e=${end}&spd=1`;
+        }
+        
         // Function to get default URL for a phoneme
         function getDefaultURL(phoneme) {
-            // Remove IPA characters that might not work in URLs
-            let urlPhoneme = phoneme
-	        .replace('a', 'https://looptube.io/?videoId=-FHXpQeFwOk&start=167.095588235294&end=170.43749999999866&rate=1')
-	        .replace('i', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=177&e=179&spd=1')
-		.replace('y', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=185.2&e=187&spd=1')
-		.replace('u', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=195&e=197&spd=1')
-		.replace('o', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=204.5&e=206.5&spd=1')
-                .replace('ɑ', 'hamburger') // a back
-                .replace('ɛ', 'e') // open e
-                .replace('ə', 'e') // schwa
-                .replace('ɔ', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=214.5&e=216.5&spd=1') // open o
-                .replace('œ', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=233&e=235&spd=1')
-                .replace('ø', 'https://www.looper.tube/?v=-FHXpQeFwOk&s=224&e=226&spd=1') // open oe
-                .replace('ɛ̃', 'en') // nasal e
-                .replace('ɔ̃', 'on') // nasal o
-                .replace('œ̃', 'oen') // nasal oe
-                .replace('ɑ̃', 'an') // nasal a
-                .replace('ʃ', 'sh') // sh
-                .replace('ʒ', 'zh') // zh
-                .replace('ɲ', 'ny') // ny
-                .replace('ŋ', 'ng') // ng
-                .replace('ʁ', 'r') // r
-                .replace('ʀ', 'r') // r
-                .replace('ɥ', 'w'); // w
-            
-            return `${urlPhoneme}`;
+            const times = phonemeTimes[phoneme] || [0, 0];
+            return createLooptubeURL(times[0], times[1]);
         }
 
         // Function to handle phoneme click
@@ -173,10 +209,10 @@
             const url = input.value.trim();
             
             if (url) {
-                //Add http:// if no protocol is specified
+                // Add http:// if no protocol is specified
                 let finalUrl = url;
                 if (!url.startsWith('http://') && !url.startsWith('https://')) {
-                   finalUrl = 'http://' + url;
+                    finalUrl = 'http://' + url;
                 }
                 window.open(finalUrl, '_blank');
             } else {
